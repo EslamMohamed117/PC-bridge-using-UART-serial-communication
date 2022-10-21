@@ -1,6 +1,7 @@
+from re import S
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
-
+import time
 
 class Ui_MainWindow(object):
 
@@ -16,13 +17,23 @@ class Ui_MainWindow(object):
         self.serial = QSerialPort(port)
         if self.serial.open(QSerialPort.ReadWrite):
             self.connectionLabel.setText("Connected")
-            self.groupBox.setEnabled(True)
-            self.groupBox_2.setEnabled(True)
+            self.ledGroup.setEnabled(True)
+            self.receivedDataGroup.setEnabled(True)
+            self.fanSpeedGroup.setEnabled(True)
         else:
             self.connectionLabel.setText("Not connected")
+    # disconnect from serial port
+    def disconnect(self):
+        self.serial.close()
+        self.connectionLabel.setText("No connection")
+        self.ledGroup.setEnabled(False)
+        self.receivedDataGroup.setEnabled(False)
+        self.fanSpeedGroup.setEnabled(False)
 
     # send character to serial port
-    def send_to_port(self, data):
+    def send_to_port(self, data, mode):
+        self.serial.write(mode.encode())
+        time.sleep(0.1)
         self.serial.write(data.encode())
     # refreshBtn ports
     def refresh_ports(self):
@@ -30,49 +41,71 @@ class Ui_MainWindow(object):
         self.load_ports()
 
     # recieve data from serial port into recieveDataLabel
-    def recieve_data(self):
+    def receive_data(self):
         data = self.serial.readAll()
-        self.recievedDataLabel.setText(data.simplified().data().decode())
+        self.receivedDataLabel.setText(data.simplified().data().decode())
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(391, 426)
+        MainWindow.resize(391, 508)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(50, 80, 281, 31))
+        self.comboBox.setGeometry(QtCore.QRect(50, 80, 291, 31))
         self.comboBox.setObjectName("comboBox")
         self.connectBtn = QtWidgets.QPushButton(self.centralwidget)
-        self.connectBtn.setGeometry(QtCore.QRect(240, 130, 93, 28))
+        self.connectBtn.setGeometry(QtCore.QRect(150, 130, 93, 28))
         self.connectBtn.setObjectName("connectBtn")
         self.refreshBtn = QtWidgets.QPushButton(self.centralwidget)
         self.refreshBtn.setGeometry(QtCore.QRect(50, 130, 93, 28))
         self.refreshBtn.setObjectName("refreshBtn")
         self.connectionLabel = QtWidgets.QLabel(self.centralwidget)
-        self.connectionLabel.setGeometry(QtCore.QRect(160, 30, 101, 41))
+        self.connectionLabel.setGeometry(QtCore.QRect(150, 30, 101, 41))
         self.connectionLabel.setObjectName("connectionLabel")
-        self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(50, 180, 291, 80))
-        self.groupBox.setObjectName("groupBox")
-        self.groupBox.setEnabled(False)
-        self.ledON = QtWidgets.QPushButton(self.groupBox)
+        self.ledGroup = QtWidgets.QGroupBox(self.centralwidget)
+        self.ledGroup.setGeometry(QtCore.QRect(50, 180, 291, 80))
+        self.ledGroup.setObjectName("ledGroup")
+        self.ledGroup.setEnabled(False)
+        self.ledON = QtWidgets.QPushButton(self.ledGroup)
         self.ledON.setGeometry(QtCore.QRect(30, 30, 93, 28))
         self.ledON.setObjectName("ledON")
-        self.ledOFF = QtWidgets.QPushButton(self.groupBox)
-        self.ledOFF.setGeometry(QtCore.QRect(160, 30, 93, 28))
+        self.ledOFF = QtWidgets.QPushButton(self.ledGroup)
+        self.ledOFF.setGeometry(QtCore.QRect(170, 30, 93, 28))
         self.ledOFF.setObjectName("ledOFF")
-        self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_2.setGeometry(QtCore.QRect(50, 280, 291, 80))
-        self.groupBox_2.setObjectName("groupBox_2")
-        self.groupBox_2.setEnabled(False)
-        self.recievedDataLabel = QtWidgets.QLabel(self.groupBox_2)
-        self.recievedDataLabel.setGeometry(QtCore.QRect(10, 30, 131, 41))
-        self.recievedDataLabel.setText("")
-        self.recievedDataLabel.setObjectName("recievedDataLabel")
-        self.recievedDataBtn = QtWidgets.QPushButton(self.groupBox_2)
-        self.recievedDataBtn.setGeometry(QtCore.QRect(170, 30, 93, 28))
-        self.recievedDataBtn.setObjectName("recievedDataBtn")
+        self.receivedDataGroup = QtWidgets.QGroupBox(self.centralwidget)
+        self.receivedDataGroup.setEnabled(False)
+        self.receivedDataGroup.setGeometry(QtCore.QRect(50, 280, 291, 80))
+        self.receivedDataGroup.setObjectName("receivedDataGroup")
+        self.receivedDataLabel = QtWidgets.QLabel(self.receivedDataGroup)
+        self.receivedDataLabel.setGeometry(QtCore.QRect(10, 20, 131, 41))
+        self.receivedDataLabel.setText("")
+        self.receivedDataLabel.setObjectName("receivedDataLabel")
+        self.receivedDataBtn = QtWidgets.QPushButton(self.receivedDataGroup)
+        self.receivedDataBtn.setGeometry(QtCore.QRect(170, 30, 93, 28))
+        self.receivedDataBtn.setObjectName("receivedDataBtn")
+        self.fanSpeedGroup = QtWidgets.QGroupBox(self.centralwidget)
+        self.fanSpeedGroup.setEnabled(False)
+        self.fanSpeedGroup.setGeometry(QtCore.QRect(49, 370, 291, 101))
+        self.fanSpeedGroup.setObjectName("fanSpeedGroup")
+        self.motorSpeedSlider = QtWidgets.QSlider(self.fanSpeedGroup)
+        self.motorSpeedSlider.setGeometry(QtCore.QRect(30, 30, 231, 22))
+        self.motorSpeedSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.motorSpeedSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
+        self.motorSpeedSlider.setRange(0,100)
+        self.motorSpeedSlider.setTickInterval(10)
+        self.motorSpeedSlider.setSingleStep(10)
+        self.motorSpeedSlider.setObjectName("motorSpeedSlider")
+        self.fanSpeedText = QtWidgets.QLabel(self.fanSpeedGroup)
+        self.fanSpeedText.setGeometry(QtCore.QRect(30, 70, 55, 16))
+        self.fanSpeedText.setObjectName("fanSpeedText")
+        self.motorSpeedLabel = QtWidgets.QLabel(self.fanSpeedGroup)
+        self.motorSpeedLabel.setGeometry(QtCore.QRect(90, 70, 55, 16))
+        self.motorSpeedLabel.setText("")
+        self.motorSpeedLabel.setObjectName("motorSpeedLabel")
+        self.disconnectBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.disconnectBtn.setGeometry(QtCore.QRect(250, 130, 93, 28))
+        self.disconnectBtn.setObjectName("disconnectBtn")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -83,25 +116,38 @@ class Ui_MainWindow(object):
 
         self.load_ports()
         self.connectBtn.clicked.connect(self.connect)
-        self.recieve_data
+        self.disconnectBtn.clicked.connect(self.disconnect)
         self.refreshBtn.clicked.connect(self.refresh_ports)
-        self.recievedDataBtn.clicked.connect(self.recieve_data)
-        self.ledON.clicked.connect(lambda: self.send_to_port("1"))
-        self.ledOFF.clicked.connect(lambda: self.send_to_port("0"))
+        self.receivedDataBtn.clicked.connect(self.receive_data)
+        self.ledON.clicked.connect(lambda: self.send_to_port("1","l"))
+        self.ledOFF.clicked.connect(lambda: self.send_to_port("0","l"))
+        self.motorSpeedSlider.valueChanged.connect(self.sliderChanged)
+
         
+
+    def sliderChanged(self):
+        # if value in motorSpeedLabel is greater than the value in the slider send '-' to the port
+        if(self.motorSpeedSlider.value()==100):
+            self.send_to_port('+','f')
+        else:
+            self.send_to_port(str(self.motorSpeedSlider.value()//10),'f')    
+        self.motorSpeedLabel.setText(str(self.motorSpeedSlider.value()))
 
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "PC Bridge"))
         self.connectBtn.setText(_translate("MainWindow", "Connect"))
         self.refreshBtn.setText(_translate("MainWindow", "Refresh"))
-        self.connectionLabel.setText(_translate("MainWindow", "TextLabel"))
-        self.groupBox.setTitle(_translate("MainWindow", "LED"))
+        self.connectionLabel.setText(_translate("MainWindow", "No connection"))
+        self.ledGroup.setTitle(_translate("MainWindow", "LED"))
         self.ledON.setText(_translate("MainWindow", "ON"))
         self.ledOFF.setText(_translate("MainWindow", "OFF"))
-        self.groupBox_2.setTitle(_translate("MainWindow", "Recieved data"))
-        self.recievedDataBtn.setText(_translate("MainWindow", "Recieve"))
+        self.receivedDataGroup.setTitle(_translate("MainWindow", "Received data"))
+        self.receivedDataBtn.setText(_translate("MainWindow", "Receive"))
+        self.fanSpeedGroup.setTitle(_translate("MainWindow", "Fan speed"))
+        self.fanSpeedText.setText(_translate("MainWindow", "Speed:"))
+        self.disconnectBtn.setText(_translate("MainWindow", "Disconnect"))
 
 if __name__ == "__main__":
     import sys
