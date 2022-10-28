@@ -21,6 +21,7 @@ class Ui_MainWindow(object):
             self.ledGroup.setEnabled(True)
             self.receivedDataGroup.setEnabled(True)
             self.fanSpeedGroup.setEnabled(True)
+            self.memoryGroup.setEnabled(True)
         else:
             self.connectionLabel.setText("Not connected")
     # disconnect from serial port
@@ -30,6 +31,7 @@ class Ui_MainWindow(object):
         self.ledGroup.setEnabled(False)
         self.receivedDataGroup.setEnabled(False)
         self.fanSpeedGroup.setEnabled(False)
+        self.memoryGroup.setEnabled(False)
 
     # send character to serial port
     def send_to_port(self, data, mode):
@@ -46,6 +48,14 @@ class Ui_MainWindow(object):
         data = self.serial.readAll()
         self.receivedDataLabel.setText(data.simplified().data().decode())
 
+    #motor control
+    def sliderChanged(self):
+        # if value in motorSpeedLabel is greater than the value in the slider send '-' to the port
+        if(self.motorSpeedSlider.value()==100):
+            self.send_to_port('+','f')
+        else:
+            self.send_to_port(str(self.motorSpeedSlider.value()//10),'f')    
+        self.motorSpeedLabel.setText(str(self.motorSpeedSlider.value()))
 #####################################LAB3###############################################################
 
     #readBtn
@@ -72,9 +82,9 @@ class Ui_MainWindow(object):
         self.valueLine.setEnabled(False)
         self.addressLine.setEnabled(False)
         self.exeBtn.setEnabled(False)
-        if x[0]=="R":
-            time.sleep(5)
-            self.valueLab.setText(self.serial.readAll().simplified().data().decode())
+        if x[0]=="r":
+            self.serial.waitForReadyRead(1000)
+            self.valueLine.setText(self.serial.readAll().simplified().data().decode())
 
 
 
