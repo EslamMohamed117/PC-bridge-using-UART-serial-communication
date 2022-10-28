@@ -61,6 +61,7 @@ class Ui_MainWindow(object):
     #readBtn
     def read(self):
         self.addressLine.setEnabled(True)
+        self.valueLine.setEnabled(False)
         self.exeBtn.setEnabled(True)
         x[0]="r"
 
@@ -193,7 +194,10 @@ class Ui_MainWindow(object):
         self.motorSpeedSlider.valueChanged.connect(self.sliderChanged)
         self.readBtn.clicked.connect(self.read)
         self.writeBtn.clicked.connect(self.write)
-        self.addressLine.textChanged.connect(lambda: x.insert(1,self.addressLine.text()+"$"))
+        # limit the value of the address line to 4 chars and the value line to 1 char
+        self.addressLine.setMaxLength(4)
+        self.valueLine.setMaxLength(1)
+        self.addressLine.textChanged.connect(lambda: x.insert(1,self.addressLine.text()))
         self.valueLine.textChanged.connect(lambda: x.insert(2,self.valueLine.text()))
         self.exeBtn.clicked.connect(self.exe) 
 
