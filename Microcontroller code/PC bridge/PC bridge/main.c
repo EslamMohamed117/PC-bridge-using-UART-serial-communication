@@ -56,34 +56,19 @@ int main(void)
 		mode =USART_RECIEVE_DATA();
 		if(mode == '@')
 		{
-			unsigned char v;
+			unsigned char addressDigit;
 			instruction = USART_RECIEVE_DATA();
 			_delay_ms(100);
-			v =USART_RECIEVE_DATA();
-			if (v>64)
-			Address += (v-55)*10000;
-			else
-			Address += (v-48)*10000;
-			v =USART_RECIEVE_DATA();
-			if (v>64)
-			Address += (v-55)*1000;
-			else
-			Address += (v-48)*1000;
-			v =USART_RECIEVE_DATA();
-			if (v>64)
-			Address += (v-55)*100;
-			else
-			Address += (v-48)*100;
-			v =USART_RECIEVE_DATA();
-			if (v>64)
-				Address += (v-55)*10;
-			else
-				Address += (v-48)*10;
-			v =USART_RECIEVE_DATA();
-			if (v>64)
-				Address += (v-55);
-			else
-				Address += (v-48);
+			unsigned short domin = 0x1000;
+			for(int i=0;i<4;i++)
+			{
+				addressDigit = USART_RECIEVE_DATA();
+				if (addressDigit>64)
+					Address += (addressDigit-55)*domin;
+				else
+					Address += (addressDigit-48)*domin;
+				domin/=0x10;
+			}
 			
 			if(instruction == 'r')
 			{

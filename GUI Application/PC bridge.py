@@ -25,17 +25,20 @@ class Ui_MainWindow(object):
 
         if self.serial.isOpen():
             self.connectionLabel.setText("Connected")
+            self.connectionLabel.setStyleSheet("color: green")
             self.ledGroup.setEnabled(True)
             self.receivedDataGroup.setEnabled(True)
             self.fanSpeedGroup.setEnabled(True)
             self.memoryGroup.setEnabled(True)
         else:
             self.connectionLabel.setText("Not connected")
+            self.connectionLabel.setStyleSheet("color: red")
     # disconnect from serial port
     def disconnect(self):
         self.serial.close()
 
         self.connectionLabel.setText("No connection")
+        self.connectionLabel.setStyleSheet("color: red")
         self.ledGroup.setEnabled(False)
         self.receivedDataGroup.setEnabled(False)
         self.fanSpeedGroup.setEnabled(False)
@@ -75,6 +78,8 @@ class Ui_MainWindow(object):
 
     #writeBtn
     def write(self):
+        self.valueLine.setMaxLength(1)
+        self.valueLine.setText('')
         self.valueLine.setEnabled(True)
         self.addressLine.setEnabled(True)
         self.exeBtn.setEnabled(True)
@@ -103,6 +108,7 @@ class Ui_MainWindow(object):
             try:
                 self.valueLine.setText(self.serial.read().decode())
             except UnicodeDecodeError:
+                self.valueLine.setMaxLength(18)
                 self.valueLine.setText("Uninitialized byte")
 
     def send_to_memory(self, data):
@@ -127,6 +133,7 @@ class Ui_MainWindow(object):
         self.connectionLabel = QtWidgets.QLabel(self.centralwidget)
         self.connectionLabel.setGeometry(QtCore.QRect(150, 30, 101, 41))
         self.connectionLabel.setObjectName("connectionLabel")
+        self.connectionLabel.setStyleSheet("color: red")
         self.ledGroup = QtWidgets.QGroupBox(self.centralwidget)
         self.ledGroup.setEnabled(False)
         self.ledGroup.setGeometry(QtCore.QRect(50, 180, 291, 80))
@@ -214,9 +221,9 @@ class Ui_MainWindow(object):
         self.motorSpeedSlider.valueChanged.connect(self.sliderChanged)
         self.readBtn.clicked.connect(self.read)
         self.writeBtn.clicked.connect(self.write)
-        # limit the value of the address line to 4 chars and the value line to 1 char
-        self.addressLine.setMaxLength(5)
-        #self.valueLine.setMaxLength(1)
+        self.addressLine.setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[A-F0-9]{1,4}")))
+        self.addressLine.setMaxLength(4)
+        self.valueLine.setMaxLength(1)
         self.addressLine.textChanged.connect(lambda: x.insert(1,self.addressLine.text()))
         self.valueLine.textChanged.connect(lambda: x.insert(2,self.valueLine.text()))
         self.exeBtn.clicked.connect(self.exe) 
