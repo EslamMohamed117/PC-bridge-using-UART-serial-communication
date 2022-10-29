@@ -2,7 +2,7 @@
 #define F_CPU 8000000UL
 #include <util/delay.h>
 #include "STD_MACROS.h"
-
+#include "DIO.h"
 
 void USART_INIT(unsigned long baud)
 {
@@ -22,19 +22,25 @@ void USART_INIT(unsigned long baud)
 	//URSEL = 1 (Select UCSRC)
 	UCSRC=(1<<URSEL)|(1<<UCSZ0)|(1<<UCSZ1);
 }
-void USART_Transmit( unsigned char data )
+
+void USART_SEND_DATA(char data)
 {
-	/* Wait for empty transmit buffer */
-	while ( !( UCSRA & (1<<UDRE)) )
-	;
-	/* Put data into buffer, sends the data */
+	while(READ_BIT(UCSRA , UDRE) == 0);
 	UDR = data;
 }
-unsigned char USART_Receive( void )
+
+char USART_RECIEVE_DATA(void)
 {
-	/* Wait for data to be received */
-	while ( !(UCSRA & (1<<RXC)) )
-	;
-	/* Get and return received data from buffer */
+	while(READ_BIT(UCSRA , RXC) == 0);
 	return UDR;
+}
+
+void USART_SEND_STRING(char * p)
+{
+	while(*p != '\0')
+	{
+		USART_SEND_DATA(*p);
+		p++;
+		_delay_ms(100);
+	}
 }

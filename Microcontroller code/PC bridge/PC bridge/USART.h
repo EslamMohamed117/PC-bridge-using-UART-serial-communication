@@ -12,8 +12,7 @@
 */
 void USART_INIT(unsigned long baud);
 
-void USART_Transmit( unsigned char data );
-unsigned char USART_Receive( void );
+
 
 /*
 	Function Name        : USART_SEND_DATA
@@ -44,7 +43,7 @@ char USART_RECIEVE_DATA(void);
 	function Arguments   : char
 	function Description : Transmit String to another Module Using USART Protocol
 */
-void USART_SEND_STRING(char *p);
+void USART_SEND_STRING(char * p);
 
 
 #endif /* USART_H_ */

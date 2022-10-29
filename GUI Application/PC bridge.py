@@ -2,8 +2,12 @@ from re import S
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 import time
+import serial
 
 x = ['','','']
+# declare port to be initialized later
+port = 0
+
 class Ui_MainWindow(object):
 
 
@@ -15,8 +19,11 @@ class Ui_MainWindow(object):
     # connect to selected port in combobox
     def connect(self):
         port = self.comboBox.currentText()
-        self.serial = QSerialPort(port)
-        if self.serial.open(QSerialPort.ReadWrite):
+        #self.serial = QSerialPort(port)
+        self.serial = serial.Serial(port, 9600, timeout=1)
+        #if self.serial is open
+
+        if self.serial.isOpen():
             self.connectionLabel.setText("Connected")
             self.ledGroup.setEnabled(True)
             self.receivedDataGroup.setEnabled(True)
@@ -27,6 +34,7 @@ class Ui_MainWindow(object):
     # disconnect from serial port
     def disconnect(self):
         self.serial.close()
+
         self.connectionLabel.setText("No connection")
         self.ledGroup.setEnabled(False)
         self.receivedDataGroup.setEnabled(False)
@@ -45,8 +53,8 @@ class Ui_MainWindow(object):
 
     # recieve data from serial port into recieveDataLabel
     def receive_data(self):
-        data = self.serial.readAll()
-        self.receivedDataLabel.setText(data.simplified().data().decode())
+        data = self.serial.read()
+        self.receivedDataLabel.setText(data.decode())
 
     #motor control
     def sliderChanged(self):
@@ -74,19 +82,31 @@ class Ui_MainWindow(object):
 
     #Exe
     def exe(self):
-        self.serial.write("@".encode())
-        self.serial.write(x[0].encode())
-        self.serial.write(x[1].encode())
+        # send @ x[0] x[1] x[2] ; to the port with respect to the time delay
+        #self.send_to_memory('@'+x[0]+x[1]+x[2]+';')
+        self.send_to_memory("@")
+        time.sleep(0.1)
+        self.send_to_memory(x[0])
+        time.sleep(0.1)
+        self.send_to_memory(self.addressLine.text())
+        time.sleep(0.1)
         if x[0]=="w":
-            self.serial.write(x[2].encode())
-        self.serial.write(";".encode())
+            self.send_to_memory(self.valueLine.text())
+            time.sleep(0.1)
+        self.send_to_memory(";")
+        time.sleep(0.1)
         self.valueLine.setEnabled(False)
         self.addressLine.setEnabled(False)
         self.exeBtn.setEnabled(False)
         if x[0]=="r":
-            self.serial.waitForReadyRead(1000)
-            self.valueLine.setText(self.serial.readAll().simplified().data().decode())
+            time.sleep(0.5)
+            try:
+                self.valueLine.setText(self.serial.read().decode())
+            except UnicodeDecodeError:
+                self.valueLine.setText("Uninitialized byte")
 
+    def send_to_memory(self, data):
+        self.serial.write(data.encode())
 
 
     def setupUi(self, MainWindow):
@@ -195,8 +215,8 @@ class Ui_MainWindow(object):
         self.readBtn.clicked.connect(self.read)
         self.writeBtn.clicked.connect(self.write)
         # limit the value of the address line to 4 chars and the value line to 1 char
-        self.addressLine.setMaxLength(4)
-        self.valueLine.setMaxLength(1)
+        self.addressLine.setMaxLength(5)
+        #self.valueLine.setMaxLength(1)
         self.addressLine.textChanged.connect(lambda: x.insert(1,self.addressLine.text()))
         self.valueLine.textChanged.connect(lambda: x.insert(2,self.valueLine.text()))
         self.exeBtn.clicked.connect(self.exe) 

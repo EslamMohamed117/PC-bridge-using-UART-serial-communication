@@ -4,6 +4,8 @@
 
 DIO.c
 
+EEPROM.c
+
 main.c
 
 USART.c
