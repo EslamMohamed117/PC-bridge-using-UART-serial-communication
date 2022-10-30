@@ -5,6 +5,8 @@
 #include "DIO.h"
 #include "USART.h"
 #include "EEPROM.h"
+#define READ_RAM(address) *((char *) (address))
+#define WRITE_RAM(address,value) *((char *) (address))=value
 
 void led_blink()
 {
@@ -31,7 +33,6 @@ void init()
 
 	// TIMER0
 	TCCR0=0b01110101;	//Configure Timer0 to run at Phase correct PWM
-	
 	sei();
 	
 }
@@ -88,6 +89,46 @@ int main(void)
 				if(USART_RECIEVE_DATA()==';')
 				{	
 					EEPROM_WRITE(Address, Wvalue);
+					led_blink();
+				}
+			}
+			Address=0;
+			mode =' ';
+		}
+		if(mode == '#')
+		{
+			unsigned char addressDigit;
+			instruction = USART_RECIEVE_DATA();
+			_delay_ms(100);
+			unsigned short domin = 0x1000;
+			for(int i=0;i<4;i++)
+			{
+				addressDigit = USART_RECIEVE_DATA();
+				if (addressDigit>64)
+				Address += (addressDigit-55)*domin;
+				else
+				Address += (addressDigit-48)*domin;
+				domin/=0x10;
+			}
+			
+			if(instruction == 'r')
+			{
+				Rvalue = READ_RAM(Address);
+				_delay_ms(100);
+				if(USART_RECIEVE_DATA()==';')
+				{
+					USART_SEND_DATA(Rvalue);
+					led_blink();
+				}
+				//DIO_SET_PIN_VAL('d', 2, 1);
+				
+			}
+			else if (instruction == 'w')
+			{
+				Wvalue = USART_RECIEVE_DATA();
+				if(USART_RECIEVE_DATA()==';')
+				{
+					WRITE_RAM(Address, Wvalue);
 					led_blink();
 				}
 			}

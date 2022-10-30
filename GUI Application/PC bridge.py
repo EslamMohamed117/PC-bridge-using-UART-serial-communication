@@ -237,10 +237,6 @@ class Ui_MainWindow(object):
         self.addressLine.setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[A-F0-9]{1,4}")))
         self.addressLine.setMaxLength(4)
         self.valueLine.setMaxLength(1)
-        #self.addressLine.textChanged.connect(lambda: x.insert(2,self.addressLine.text()))
-        #self.valueLine.textChanged.connect(lambda: x.insert(3,self.valueLine.text()))
-        # pass to exe function '#' if ramRBtn is checked and '@' if romRBtn is checked and value of address and value
-        # pass mode = 'r' if readBtn is checked and mode = 'w' if writeBtn is checked
         self.exeBtn.clicked.connect(lambda: self.exe('#' if self.ramRBtn.isChecked() else '@',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
 
 
