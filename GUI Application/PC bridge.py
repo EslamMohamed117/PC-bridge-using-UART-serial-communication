@@ -4,12 +4,10 @@ from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 import time
 import serial
 
-x = ['','','']
 # declare port to be initialized later
 port = 0
-
 class Ui_MainWindow(object):
-
+    modeOperation=''
 
     def load_ports(self):
         ports = QSerialPortInfo().availablePorts()
@@ -74,7 +72,9 @@ class Ui_MainWindow(object):
         self.addressLine.setEnabled(True)
         self.valueLine.setEnabled(False)
         self.exeBtn.setEnabled(True)
-        x[0]="r"
+        self.ramRBtn.setEnabled(True)
+        self.romRBtn.setEnabled(True)
+        self.modeOperation="r"
 
     #writeBtn
     def write(self):
@@ -83,27 +83,30 @@ class Ui_MainWindow(object):
         self.valueLine.setEnabled(True)
         self.addressLine.setEnabled(True)
         self.exeBtn.setEnabled(True)
-        x[0]="w"
+        self.ramRBtn.setEnabled(True)
+        self.romRBtn.setEnabled(True)
+        self.modeOperation="w"
 
     #Exe
-    def exe(self):
+    def exe(self, addressingElement, mode, address, value):
         # send @ x[0] x[1] x[2] ; to the port with respect to the time delay
         #self.send_to_memory('@'+x[0]+x[1]+x[2]+';')
-        self.send_to_memory("@")
+        y=''
+        self.send_to_memory(addressingElement) # @ or #
         time.sleep(0.1)
-        self.send_to_memory(x[0])
+        self.send_to_memory(mode) # r or w
         time.sleep(0.1)
-        self.send_to_memory(self.addressLine.text())
+        self.send_to_memory(address) # address
         time.sleep(0.1)
-        if x[0]=="w":
-            self.send_to_memory(self.valueLine.text())
+        if mode=="w":
+            self.send_to_memory(value) #value
             time.sleep(0.1)
-        self.send_to_memory(";")
+        self.send_to_memory(";") #end of command
         time.sleep(0.1)
         self.valueLine.setEnabled(False)
         self.addressLine.setEnabled(False)
         self.exeBtn.setEnabled(False)
-        if x[0]=="r":
+        if mode=="r":
             time.sleep(0.5)
             try:
                 self.valueLine.setText(self.serial.read().decode())
@@ -118,7 +121,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(377, 728)
+        MainWindow.resize(390, 728)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
@@ -131,7 +134,7 @@ class Ui_MainWindow(object):
         self.refreshBtn.setGeometry(QtCore.QRect(50, 130, 93, 28))
         self.refreshBtn.setObjectName("refreshBtn")
         self.connectionLabel = QtWidgets.QLabel(self.centralwidget)
-        self.connectionLabel.setGeometry(QtCore.QRect(150, 30, 101, 41))
+        self.connectionLabel.setGeometry(QtCore.QRect(220, 40, 81, 16))
         self.connectionLabel.setObjectName("connectionLabel")
         self.connectionLabel.setStyleSheet("color: red")
         self.ledGroup = QtWidgets.QGroupBox(self.centralwidget)
@@ -187,22 +190,32 @@ class Ui_MainWindow(object):
         self.writeBtn.setObjectName("writeBtn")
         self.addressLine = QtWidgets.QLineEdit(self.memoryGroup)
         self.addressLine.setEnabled(False)
-        self.addressLine.setGeometry(QtCore.QRect(30, 80, 221, 22))
+        self.addressLine.setGeometry(QtCore.QRect(70, 80, 131, 22))
         self.addressLine.setObjectName("addressLine")
         self.valueLine = QtWidgets.QLineEdit(self.memoryGroup)
         self.valueLine.setEnabled(False)
-        self.valueLine.setGeometry(QtCore.QRect(30, 130, 221, 22))
+        self.valueLine.setGeometry(QtCore.QRect(70, 130, 131, 22))
         self.valueLine.setObjectName("valueLine")
         self.exeBtn = QtWidgets.QPushButton(self.memoryGroup)
-        self.exeBtn.setGeometry(QtCore.QRect(90, 160, 93, 28))
+        self.exeBtn.setGeometry(QtCore.QRect(100, 160, 93, 28))
         self.exeBtn.setObjectName("exeBtn")
         self.exeBtn.setEnabled(False)
         self.addressLab = QtWidgets.QLabel(self.memoryGroup)
-        self.addressLab.setGeometry(QtCore.QRect(40, 60, 55, 16))
+        self.addressLab.setGeometry(QtCore.QRect(10, 70, 51, 41))
         self.addressLab.setObjectName("addressLab")
         self.valueLab = QtWidgets.QLabel(self.memoryGroup)
-        self.valueLab.setGeometry(QtCore.QRect(40, 110, 55, 16))
+        self.valueLab.setGeometry(QtCore.QRect(10, 120, 41, 41))
         self.valueLab.setObjectName("valueLab")
+        self.ramRBtn = QtWidgets.QRadioButton(self.memoryGroup)
+        self.ramRBtn.setGeometry(QtCore.QRect(210, 90, 95, 20))
+        self.ramRBtn.setChecked(True)
+        self.ramRBtn.setObjectName("ramRBtn")
+        self.romRBtn = QtWidgets.QRadioButton(self.memoryGroup)
+        self.romRBtn.setGeometry(QtCore.QRect(210, 120, 95, 20))
+        self.romRBtn.setObjectName("romRBtn")
+        self.connectionStatusLabel = QtWidgets.QLabel(self.centralwidget)
+        self.connectionStatusLabel.setGeometry(QtCore.QRect(50, 40, 111, 16))
+        self.connectionStatusLabel.setObjectName("connectionStatusLabel")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -224,9 +237,11 @@ class Ui_MainWindow(object):
         self.addressLine.setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[A-F0-9]{1,4}")))
         self.addressLine.setMaxLength(4)
         self.valueLine.setMaxLength(1)
-        self.addressLine.textChanged.connect(lambda: x.insert(1,self.addressLine.text()))
-        self.valueLine.textChanged.connect(lambda: x.insert(2,self.valueLine.text()))
-        self.exeBtn.clicked.connect(self.exe) 
+        #self.addressLine.textChanged.connect(lambda: x.insert(2,self.addressLine.text()))
+        #self.valueLine.textChanged.connect(lambda: x.insert(3,self.valueLine.text()))
+        # pass to exe function '#' if ramRBtn is checked and '@' if romRBtn is checked and value of address and value
+        # pass mode = 'r' if readBtn is checked and mode = 'w' if writeBtn is checked
+        self.exeBtn.clicked.connect(lambda: self.exe('#' if self.ramRBtn.isChecked() else '@',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
 
 
     def retranslateUi(self, MainWindow):
@@ -248,8 +263,10 @@ class Ui_MainWindow(object):
         self.writeBtn.setText(_translate("MainWindow", "Write"))
         self.exeBtn.setText(_translate("MainWindow", "Execute"))
         self.addressLab.setText(_translate("MainWindow", "Address"))
+        self.ramRBtn.setText(_translate("MainWindow", "RAM"))
+        self.romRBtn.setText(_translate("MainWindow", "ROM"))
         self.valueLab.setText(_translate("MainWindow", "Value"))
-
+        self.connectionStatusLabel.setText(_translate("MainWindow", "Connection status:"))
 
 if __name__ == "__main__":
     import sys
