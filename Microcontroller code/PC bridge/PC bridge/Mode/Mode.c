@@ -15,19 +15,15 @@ void Mode_Select()
 		{
 			case 0:
 				LED_MainFunction(cmd_buffer);
-				UART_SendPayload(&ack,1);
 				break;
 			case 1:
 				Motor_MainFunction(cmd_buffer);
-				UART_SendPayload(&ack,1);
 				break;
 			case 2:
 				Memory_MainFunction(cmd_buffer);
-				UART_SendPayload(&ack,1);
 				break;
 			case 3:
 				WAVE_MainFunction(cmd_buffer);
-				UART_SendPayload(&ack,1);
 				break;
 		}
 	}

@@ -19,10 +19,6 @@ void LED_Blink()
 	_delay_ms(500);
 	PORTA &=~(1<<PINA0);
 	_delay_ms(500);
-	PORTA &=~(1<<PINA0);
-	_delay_ms(500);
-	PORTA &=~(1<<PINA0);
-	_delay_ms(500);
 }
 
 void LED_MainFunction(uint8_t *buffer)

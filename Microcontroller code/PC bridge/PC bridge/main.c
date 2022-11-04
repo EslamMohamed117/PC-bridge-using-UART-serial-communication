@@ -12,23 +12,6 @@ int main(void)
 }		
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ISR(INT0_vect)
 {
 	uint8_t A= 'A';

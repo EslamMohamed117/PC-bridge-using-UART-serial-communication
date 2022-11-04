@@ -61,11 +61,10 @@ class Ui_MainWindow(object):
     def sliderChanged(self):
         # if value in motorSpeedLabel is greater than the value in the slider send '-' to the port
         if(self.motorSpeedSlider.value()==100):
-            self.send_to_port('+','f')
+            self.motor_access('+')
         else:
-            self.send_to_port(str(self.motorSpeedSlider.value()//10),'f')    
+            self.motor_access(str(self.motorSpeedSlider.value()//10))    
         self.motorSpeedLabel.setText(str(self.motorSpeedSlider.value()))
-#####################################LAB3###############################################################
 
     #readBtn
     def read(self):
@@ -87,40 +86,15 @@ class Ui_MainWindow(object):
         self.romRBtn.setEnabled(True)
         self.modeOperation="w"
 
-    #Exe
-    def exe(self, addressingElement, mode, address, value):
-        # send @ x[0] x[1] x[2] ; to the port with respect to the time delay
-        #self.send_to_memory('@'+x[0]+x[1]+x[2]+';')
-        y=''
-        self.send_to_memory(addressingElement) # @ or #
-        time.sleep(0.1)
-        self.send_to_memory(mode) # r or w
-        time.sleep(0.1)
-        self.send_to_memory(address) # address
-        time.sleep(0.1)
-        if mode=="w":
-            self.send_to_memory(value) #value
-            time.sleep(0.1)
-        self.send_to_memory(";") #end of command
-        time.sleep(0.1)
-        self.valueLine.setEnabled(False)
-        self.addressLine.setEnabled(False)
-        self.exeBtn.setEnabled(False)
-        if mode=="r":
-            time.sleep(0.5)
-            try:
-                self.valueLine.setText(self.serial.read().decode())
-            except UnicodeDecodeError:
-                self.valueLine.setMaxLength(18)
-                self.valueLine.setText("Uninitialized byte")
-
     def send_to_memory(self, data):
         self.serial.write(data.encode())
 
-    def exe2(self, serviceMode,addressingElement, operation, address, value):
-        # send @ x[0] x[1] x[2] ; to the port with respect to the time delay
-        #self.send_to_memory('@'+x[0]+x[1]+x[2]+';')
-        y=''
+    def memory_access(self, serviceMode,addressingElement, operation, address, value):
+        # @[1] mode[1] addressingElement[1] operation[1] address[4] value[1] ;[1]
+        # Ram-->0
+        # Rom-->1
+        # r,w
+
         self.send_to_memory('@') # @ or #
         time.sleep(0.1)
         self.send_to_memory(serviceMode) # memory or fan speed or led
@@ -145,7 +119,46 @@ class Ui_MainWindow(object):
             except UnicodeDecodeError:
                 self.valueLine.setMaxLength(18)
                 self.valueLine.setText("Uninitialized byte")
+        
+    def led_access(self, operation):
+        # @[1] mode[1] on/off[1] dummy[6] ;[1]
+        y=''
+        self.send_to_memory('@') # @ or #
+        time.sleep(0.1)
+        self.send_to_memory('0') # memory or fan speed or led
+        time.sleep(0.1)
+        self.send_to_memory(operation) # 0 or 1
+        time.sleep(0.1)
+        self.send_to_memory("~~~~~~;") #end of command
+        time.sleep(0.1)
 
+    def motor_access(self, speed):
+        
+        # @[1] mode[1] speed[1] dummy[6] ;[1]
+        y=''
+        self.send_to_memory('@') # @ or #
+        time.sleep(0.1)
+        self.send_to_memory('1') # memory or fan speed or led
+        time.sleep(0.1)
+        self.send_to_memory(speed) # 0 or 1
+        time.sleep(0.1)
+        self.send_to_memory("~~~~~~;") #end of command
+        time.sleep(0.1)
+    
+    def wave_access(self, wave, amp, freq):
+        # @[1] mode[1] wave[1] amp[3] freq[3] ;[1]
+        self.send_to_memory('@')
+        time.sleep(0.1)
+        self.send_to_memory('3')
+        time.sleep(0.1)
+        self.send_to_memory(wave)
+        time.sleep(0.1)
+        self.send_to_memory(amp)
+        time.sleep(0.1)
+        self.send_to_memory(freq)
+        time.sleep(0.1)
+        self.send_to_memory(';')
+        time.sleep(0.1)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -195,6 +208,8 @@ class Ui_MainWindow(object):
         self.motorSpeedSlider.setGeometry(QtCore.QRect(30, 30, 231, 22))
         self.motorSpeedSlider.setOrientation(QtCore.Qt.Horizontal)
         self.motorSpeedSlider.setTickPosition(QtWidgets.QSlider.TicksBothSides)
+        self.motorSpeedSlider.setMinimum(0)
+        self.motorSpeedSlider.setMaximum(100)
         self.motorSpeedSlider.setTickInterval(10)
         self.motorSpeedSlider.setObjectName("motorSpeedSlider")
         self.fanSpeedText = QtWidgets.QLabel(self.fanSpeedGroup)
@@ -258,8 +273,8 @@ class Ui_MainWindow(object):
         self.disconnectBtn.clicked.connect(self.disconnect)
         self.refreshBtn.clicked.connect(self.refresh_ports)
         self.receivedDataBtn.clicked.connect(self.receive_data)
-        self.ledON.clicked.connect(lambda: self.send_to_port("1","l"))
-        self.ledOFF.clicked.connect(lambda: self.send_to_port("0","l"))
+        self.ledON.clicked.connect(lambda: self.led_access("1"))
+        self.ledOFF.clicked.connect(lambda: self.led_access("0"))
         self.motorSpeedSlider.valueChanged.connect(self.sliderChanged)
         self.readBtn.clicked.connect(self.read)
         self.writeBtn.clicked.connect(self.write)
@@ -267,7 +282,7 @@ class Ui_MainWindow(object):
         self.addressLine.setMaxLength(4)
         self.valueLine.setMaxLength(1)
         #self.exeBtn.clicked.connect(lambda: self.exe('#' if self.ramRBtn.isChecked() else '@',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
-        self.exeBtn.clicked.connect(lambda: self.exe2('2','0' if self.ramRBtn.isChecked() else '1',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
+        self.exeBtn.clicked.connect(lambda: self.memory_access('2','0' if self.ramRBtn.isChecked() else '1',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
 
 
     def retranslateUi(self, MainWindow):
