@@ -96,24 +96,16 @@ class Ui_MainWindow(object):
         # r,w
 
         self.send_to_memory('@') # @ or #
-        time.sleep(0.1)
         self.send_to_memory(serviceMode) # memory or fan speed or led
-        time.sleep(0.1)
         self.send_to_memory(addressingElement) # RAM or ROM
-        time.sleep(0.1)
         self.send_to_memory(operation) # r or w
-        time.sleep(0.1)
         self.send_to_memory(address) # address
-        time.sleep(0.1)
         self.send_to_memory(value) #value
-        time.sleep(0.1)
         self.send_to_memory(";") #end of command
-        time.sleep(0.1)
         self.valueLine.setEnabled(False)
         self.addressLine.setEnabled(False)
         self.exeBtn.setEnabled(False)
         if operation=="r":
-            time.sleep(0.5)
             try:
                 self.valueLine.setText(self.serial.read().decode())
             except UnicodeDecodeError:
@@ -122,43 +114,27 @@ class Ui_MainWindow(object):
         
     def led_access(self, operation):
         # @[1] mode[1] on/off[1] dummy[6] ;[1]
-        y=''
         self.send_to_memory('@') # @ or #
-        time.sleep(0.1)
         self.send_to_memory('0') # memory or fan speed or led
-        time.sleep(0.1)
         self.send_to_memory(operation) # 0 or 1
-        time.sleep(0.1)
         self.send_to_memory("~~~~~~;") #end of command
-        time.sleep(0.1)
 
     def motor_access(self, speed):
         
         # @[1] mode[1] speed[1] dummy[6] ;[1]
-        y=''
         self.send_to_memory('@') # @ or #
-        time.sleep(0.1)
         self.send_to_memory('1') # memory or fan speed or led
-        time.sleep(0.1)
         self.send_to_memory(speed) # 0 or 1
-        time.sleep(0.1)
         self.send_to_memory("~~~~~~;") #end of command
-        time.sleep(0.1)
     
     def wave_access(self, wave, amp, freq):
         # @[1] mode[1] wave[1] amp[3] freq[3] ;[1]
         self.send_to_memory('@')
-        time.sleep(0.1)
         self.send_to_memory('3')
-        time.sleep(0.1)
         self.send_to_memory(wave)
-        time.sleep(0.1)
         self.send_to_memory(amp)
-        time.sleep(0.1)
         self.send_to_memory(freq)
-        time.sleep(0.1)
         self.send_to_memory(';')
-        time.sleep(0.1)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
