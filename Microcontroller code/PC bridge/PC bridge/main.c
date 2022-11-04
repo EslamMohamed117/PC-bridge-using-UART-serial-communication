@@ -3,10 +3,11 @@
 #define F_CPU 8000000UL
 #include <util/delay.h>
 #include "DIO.h"
-#include "USART.h"
+#include "uart.h"
 #include "EEPROM.h"
 #define READ_RAM(address) *((char *) (address))
 #define WRITE_RAM(address,value) *((char *) (address))=value
+
 
 void led_blink()
 {
@@ -39,7 +40,7 @@ void init()
 
 int main(void)
 {
-	USART_INIT(9600);
+	UART_Config();
 	DIO_SET_PIN_DIR('d', 1, 1);
 	DIO_SET_PIN_DIR('d', 2, 1);
 	DIO_SET_PIN_DIR('a', 0, 1);
@@ -50,20 +51,20 @@ int main(void)
 	init();
 	volatile float duty_cycle =0;
 
-	volatile char x;
-	volatile char mode;
+	static uint8_t x[1];
+	static uint8_t mode[1];
     while (1) 
     {
-		mode =USART_RECIEVE_DATA();
-		if(mode == '@')
+		UART_ReceivePayload(mode,1);
+		/*if(mode == '@')
 		{
 			unsigned char addressDigit;
-			instruction = USART_RECIEVE_DATA();
+			instruction = UART_ReceivePayload();
 			_delay_ms(100);
 			unsigned short domin = 0x1000;
 			for(int i=0;i<4;i++)
 			{
-				addressDigit = USART_RECIEVE_DATA();
+				addressDigit = UART_ReceivePayload();
 				if (addressDigit>64)
 					Address += (addressDigit-55)*domin;
 				else
@@ -75,7 +76,7 @@ int main(void)
 			{
 				Rvalue = EEPROM_u8READ(Address);
 				_delay_ms(100);
-				if(USART_RECIEVE_DATA()==';')
+				if(UART_ReceivePayload()==';')
 				{
 					USART_SEND_DATA(Rvalue);
 					led_blink();
@@ -85,8 +86,8 @@ int main(void)
 			}
 			else if (instruction == 'w')
 			{
-				Wvalue = USART_RECIEVE_DATA();
-				if(USART_RECIEVE_DATA()==';')
+				Wvalue = UART_ReceivePayload();
+				if(UART_ReceivePayload()==';')
 				{	
 					EEPROM_WRITE(Address, Wvalue);
 					led_blink();
@@ -98,12 +99,12 @@ int main(void)
 		if(mode == '#')
 		{
 			unsigned char addressDigit;
-			instruction = USART_RECIEVE_DATA();
+			instruction = UART_ReceivePayload();
 			_delay_ms(100);
 			unsigned short domin = 0x1000;
 			for(int i=0;i<4;i++)
 			{
-				addressDigit = USART_RECIEVE_DATA();
+				addressDigit = UART_ReceivePayload();
 				if (addressDigit>64)
 				Address += (addressDigit-55)*domin;
 				else
@@ -115,7 +116,7 @@ int main(void)
 			{
 				Rvalue = READ_RAM(Address);
 				_delay_ms(100);
-				if(USART_RECIEVE_DATA()==';')
+				if(UART_ComparePayload(';'))
 				{
 					USART_SEND_DATA(Rvalue);
 					led_blink();
@@ -125,8 +126,8 @@ int main(void)
 			}
 			else if (instruction == 'w')
 			{
-				Wvalue = USART_RECIEVE_DATA();
-				if(USART_RECIEVE_DATA()==';')
+				Wvalue = UART_ReceivePayload();
+				if(UART_ComparePayload(';'))
 				{
 					WRITE_RAM(Address, Wvalue);
 					led_blink();
@@ -134,42 +135,41 @@ int main(void)
 			}
 			Address=0;
 			mode =' ';
-		}
-		else if(mode == 'l')
+		}*/
+		if(mode[0] == 'l')
 		{
-			x = USART_RECIEVE_DATA();
-			if(x == '0')
+			UART_ReceivePayload(x,1);
+			if(x[0] == '0')
 			{
 				// turn off LED.
 				PORTA &= ~(1<<PINA0);
 			}
-			else if(x =='1')
+			else if(x[0] =='1')
 			{
 				// turn on LED.
 				PORTA |= 1<<PINA0;
 			}
 		}
-		else if(mode =='f')
+		else if(mode[0] =='f')
 		{
-			x = USART_RECIEVE_DATA();
-			if(x=='+') // Maximum speed
+			UART_ReceivePayload(x,1);
+			if(x[0]=='+') // Maximum speed
 			duty_cycle = 1;
 			else
-			duty_cycle = ((unsigned int)x-0x30)/10.0;
+			duty_cycle = ((unsigned int)x[0]-0x30)/10.0;
 		}
 		OCR0 = (uint8_t)(255* (1-duty_cycle));
 	}
 }
-ISR(USART_RXC_vect)
-{
-}
 ISR(INT0_vect)
 {
-	USART_SEND_DATA('A');
+	uint8_t A= 'A';
+	UART_SendPayload(&A,1);
 }
 ISR(INT1_vect)
 {
-	USART_SEND_DATA('Z');
+	uint8_t Z= 'Z';
+	UART_SendPayload(&Z,1);
 }
 
 

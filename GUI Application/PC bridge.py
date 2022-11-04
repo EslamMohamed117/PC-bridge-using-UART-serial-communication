@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
     # recieve data from serial port into recieveDataLabel
     def receive_data(self):
         data = self.serial.read()
-        self.receivedDataLabel.setText(data.decode())
+        self.receivedDataLabel.setText(data.decode().strip())
 
     #motor control
     def sliderChanged(self):

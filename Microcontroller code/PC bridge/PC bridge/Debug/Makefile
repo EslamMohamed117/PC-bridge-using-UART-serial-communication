@@ -39,8 +39,11 @@ SUBDIRS :=
 C_SRCS +=  \
 ../DIO.c \
 ../EEPROM.c \
+../main-Waveform.c \
 ../main.c \
-../USART.c
+../uart_atmega16.c \
+../USART.c \
+../waveform.c
 
 
 PREPROCESSING_SRCS += 
@@ -52,26 +55,38 @@ ASM_SRCS +=
 OBJS +=  \
 DIO.o \
 EEPROM.o \
+main-Waveform.o \
 main.o \
-USART.o
+uart_atmega16.o \
+USART.o \
+waveform.o
 
 OBJS_AS_ARGS +=  \
 DIO.o \
 EEPROM.o \
+main-Waveform.o \
 main.o \
-USART.o
+uart_atmega16.o \
+USART.o \
+waveform.o
 
 C_DEPS +=  \
 DIO.d \
 EEPROM.d \
+main-Waveform.d \
 main.d \
-USART.d
+uart_atmega16.d \
+USART.d \
+waveform.d
 
 C_DEPS_AS_ARGS +=  \
 DIO.d \
 EEPROM.d \
+main-Waveform.d \
 main.d \
-USART.d
+uart_atmega16.d \
+USART.d \
+waveform.d
 
 OUTPUT_FILE_PATH +=PC\ bridge.elf
 
@@ -101,6 +116,13 @@ LINKER_SCRIPT_DEP+=
 	@echo Finished building: $<
 	
 
+./main-Waveform.o: .././main-Waveform.c
+	@echo Building file: $<
+	@echo Invoking: XC8 C Compiler : 2.31
+	$(QUOTE)C:\Program Files\Microchip\xc8\v2.31\bin\xc8-cc.exe$(QUOTE)  -mcpu=ATmega16  -mdfp="C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\xc8"  -c -x c -funsigned-char -funsigned-bitfields -mext=cci -D__ATmega16__ -DDEBUG  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 ./main.o: .././main.c
 	@echo Building file: $<
 	@echo Invoking: XC8 C Compiler : 2.31
@@ -108,7 +130,21 @@ LINKER_SCRIPT_DEP+=
 	@echo Finished building: $<
 	
 
+./uart_atmega16.o: .././uart_atmega16.c
+	@echo Building file: $<
+	@echo Invoking: XC8 C Compiler : 2.31
+	$(QUOTE)C:\Program Files\Microchip\xc8\v2.31\bin\xc8-cc.exe$(QUOTE)  -mcpu=ATmega16  -mdfp="C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\xc8"  -c -x c -funsigned-char -funsigned-bitfields -mext=cci -D__ATmega16__ -DDEBUG  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 ./USART.o: .././USART.c
+	@echo Building file: $<
+	@echo Invoking: XC8 C Compiler : 2.31
+	$(QUOTE)C:\Program Files\Microchip\xc8\v2.31\bin\xc8-cc.exe$(QUOTE)  -mcpu=ATmega16  -mdfp="C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\xc8"  -c -x c -funsigned-char -funsigned-bitfields -mext=cci -D__ATmega16__ -DDEBUG  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./waveform.o: .././waveform.c
 	@echo Building file: $<
 	@echo Invoking: XC8 C Compiler : 2.31
 	$(QUOTE)C:\Program Files\Microchip\xc8\v2.31\bin\xc8-cc.exe$(QUOTE)  -mcpu=ATmega16  -mdfp="C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\xc8"  -c -x c -funsigned-char -funsigned-bitfields -mext=cci -D__ATmega16__ -DDEBUG  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

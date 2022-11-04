@@ -116,16 +116,37 @@
     <Compile Include="EEPROM.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="main-Waveform.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Memory.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Memory.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="STD_MACROS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="uart_atmega16.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="USART.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="USART.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="waveform.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="waveform.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

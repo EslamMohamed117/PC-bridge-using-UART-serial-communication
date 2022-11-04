@@ -1,4 +1,4 @@
-main.d main.o: .././main.c \
+main-Waveform.d main-Waveform.o: .././main-Waveform.c \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\io.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\sfr_defs.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\inttypes.h \
@@ -13,10 +13,8 @@ main.d main.o: .././main.c \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\interrupt.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay_basic.h \
- c:\program\ files\microchip\xc8\v2.31\avr\avr\include\math.h .././DIO.h \
- .././uart.h \
- c:\program\ files\microchip\xc8\v2.31\avr\lib\gcc\avr\5.4.0\include\stdbool.h \
- .././EEPROM.h
+ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\math.h \
+ .././waveform.h
 
 c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\io.h:
 
@@ -48,10 +46,4 @@ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay_basic.h:
 
 c:\program\ files\microchip\xc8\v2.31\avr\avr\include\math.h:
 
-.././DIO.h:
-
-.././uart.h:
-
-c:\program\ files\microchip\xc8\v2.31\avr\lib\gcc\avr\5.4.0\include\stdbool.h:
-
-.././EEPROM.h:
+.././waveform.h:
