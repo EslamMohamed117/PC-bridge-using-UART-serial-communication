@@ -117,6 +117,35 @@ class Ui_MainWindow(object):
     def send_to_memory(self, data):
         self.serial.write(data.encode())
 
+    def exe2(self, serviceMode,addressingElement, operation, address, value):
+        # send @ x[0] x[1] x[2] ; to the port with respect to the time delay
+        #self.send_to_memory('@'+x[0]+x[1]+x[2]+';')
+        y=''
+        self.send_to_memory('@') # @ or #
+        time.sleep(0.1)
+        self.send_to_memory(serviceMode) # memory or fan speed or led
+        time.sleep(0.1)
+        self.send_to_memory(addressingElement) # RAM or ROM
+        time.sleep(0.1)
+        self.send_to_memory(operation) # r or w
+        time.sleep(0.1)
+        self.send_to_memory(address) # address
+        time.sleep(0.1)
+        self.send_to_memory(value) #value
+        time.sleep(0.1)
+        self.send_to_memory(";") #end of command
+        time.sleep(0.1)
+        self.valueLine.setEnabled(False)
+        self.addressLine.setEnabled(False)
+        self.exeBtn.setEnabled(False)
+        if operation=="r":
+            time.sleep(0.5)
+            try:
+                self.valueLine.setText(self.serial.read().decode())
+            except UnicodeDecodeError:
+                self.valueLine.setMaxLength(18)
+                self.valueLine.setText("Uninitialized byte")
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -237,7 +266,8 @@ class Ui_MainWindow(object):
         self.addressLine.setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[A-F0-9]{1,4}")))
         self.addressLine.setMaxLength(4)
         self.valueLine.setMaxLength(1)
-        self.exeBtn.clicked.connect(lambda: self.exe('#' if self.ramRBtn.isChecked() else '@',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
+        #self.exeBtn.clicked.connect(lambda: self.exe('#' if self.ramRBtn.isChecked() else '@',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
+        self.exeBtn.clicked.connect(lambda: self.exe2('2','0' if self.ramRBtn.isChecked() else '1',self.modeOperation,self.addressLine.text(),'~' if self.valueLine.text() == '' else self.valueLine.text()))
 
 
     def retranslateUi(self, MainWindow):

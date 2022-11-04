@@ -12,7 +12,10 @@ uart_atmega16.d uart_atmega16.o: .././uart_atmega16.c \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\lock.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\interrupt.h \
  .././uart.h \
- c:\program\ files\microchip\xc8\v2.31\avr\lib\gcc\avr\5.4.0\include\stdbool.h
+ c:\program\ files\microchip\xc8\v2.31\avr\lib\gcc\avr\5.4.0\include\stdbool.h \
+ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay.h \
+ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay_basic.h \
+ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\math.h
 
 c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\io.h:
 
@@ -41,3 +44,9 @@ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\interrupt.h:
 .././uart.h:
 
 c:\program\ files\microchip\xc8\v2.31\avr\lib\gcc\avr\5.4.0\include\stdbool.h:
+
+c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay.h:
+
+c:\program\ files\microchip\xc8\v2.31\avr\avr\include\util\delay_basic.h:
+
+c:\program\ files\microchip\xc8\v2.31\avr\avr\include\math.h:

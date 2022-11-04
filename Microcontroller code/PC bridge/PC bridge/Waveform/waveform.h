@@ -3,7 +3,7 @@
 
 
 extern void WAVE_Init(void);
-extern void WAVE_MainFunction(void);
+extern void WAVE_MainFunction(uint8_t *buffer);
 
 
 #endif

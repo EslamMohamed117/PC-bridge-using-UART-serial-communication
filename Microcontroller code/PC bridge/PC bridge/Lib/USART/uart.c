@@ -98,12 +98,12 @@ void UART_ReceivePayload(uint8_t *rx_data, uint16_t len)
     rx_cnt    = 0;
 }
 
-bool UART_ComparePayload(uint8_t data)
+/*bool UART_ComparePayload(uint8_t data)
 {
 	uint8_t receivedData;
-	UART_ReceivePayload(receivedData,1);
+	UART_ReceivePayload(&receivedData,1);
 	return ((data == receivedData) ? 1 : 0);
-}
+}*/
 
 uint8_t UART_IsTxComplete(void)
 {

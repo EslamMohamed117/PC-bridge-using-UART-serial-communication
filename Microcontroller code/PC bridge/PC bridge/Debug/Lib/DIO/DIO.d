@@ -1,4 +1,4 @@
-EEPROM.d EEPROM.o: .././EEPROM.c \
+Lib/DIO/DIO.d Lib/DIO/DIO.o: ../Lib/DIO/DIO.c \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\io.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\sfr_defs.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\inttypes.h \
@@ -10,7 +10,7 @@ EEPROM.d EEPROM.o: .././EEPROM.c \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\version.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\fuse.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\lock.h \
- .././STD_MACROS.h
+ ../Lib/DIO/STD_MACROS.h
 
 c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\io.h:
 
@@ -34,4 +34,4 @@ c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\fuse.h:
 
 c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\lock.h:
 
-.././STD_MACROS.h:
+../Lib/DIO/STD_MACROS.h:

@@ -2,17 +2,23 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-DIO.c
+Init\Init.c
 
-EEPROM.c
+LED\LED.c
 
-main-Waveform.c
+Lib\DIO\DIO.c
+
+Lib\EEPROM\EEPROM.c
+
+Lib\USART\uart.c
 
 main.c
 
-uart_atmega16.c
+Memory\Memory.c
 
-USART.c
+Mode\Mode.c
 
-waveform.c
+Motor\Motor.c
+
+Waveform\waveform.c
 

@@ -104,51 +104,78 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DIO.c">
+    <Compile Include="Init\Init.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="DIO.h">
+    <Compile Include="Init\Init.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="EEPROM.c">
+    <Compile Include="LED\LED.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="EEPROM.h">
+    <Compile Include="LED\LED.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="main-Waveform.c">
+    <Compile Include="Lib\DIO\DIO.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Lib\DIO\DIO.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Lib\DIO\STD_MACROS.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Lib\EEPROM\EEPROM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Lib\EEPROM\EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Lib\USART\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Lib\USART\uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Memory.c">
+    <Compile Include="Memory\Memory.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Memory.h">
+    <Compile Include="Memory\Memory.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="STD_MACROS.h">
+    <Compile Include="Mode\Mode.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="uart.h">
+    <Compile Include="Mode\Mode.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="uart_atmega16.c">
+    <Compile Include="Motor\Motor.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="USART.c">
+    <Compile Include="Motor\Motor.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="USART.h">
+    <Compile Include="Waveform\waveform.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="waveform.c">
+    <Compile Include="Waveform\waveform.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="waveform.h">
-      <SubType>compile</SubType>
-    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LED" />
+    <Folder Include="Lib\DIO" />
+    <Folder Include="Lib\EEPROM" />
+    <Folder Include="Lib\USART\" />
+    <Folder Include="Memory" />
+    <Folder Include="Motor" />
+    <Folder Include="Lib" />
+    <Folder Include="Mode" />
+    <Folder Include="Init" />
+    <Folder Include="Waveform" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

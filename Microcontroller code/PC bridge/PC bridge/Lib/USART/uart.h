@@ -2,6 +2,8 @@
 #define _UART_H_
 
 #include <stdbool.h>
+#include <avr/io.h>
+#include <util/delay.h>
 #define F_CPU 8000000UL
 #define BAUD_RATE 9600
 #define BAUD_RATE_VALUE (((F_CPU)/(BAUD_RATE*16UL))-1)
