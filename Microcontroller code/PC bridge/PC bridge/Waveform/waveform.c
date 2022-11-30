@@ -37,20 +37,21 @@ static uint8_t amp_value = 0;
 static uint8_t freq_value = 0;
 static uint8_t waveform_index = WAVEFORM_NUM;
 
+unsigned int sine_value[13] = {128,192,238,255,238,192,128,64,17,0,17,64,128};
+
 
 void squareWave(uint8_t amp, uint8_t freq)
 {
-    // TODO: Place ur code here
-    DAC_DDR = 255;
-    DAC_PORT = 1; 
+	DAC_DDR = 255;
+    DAC_PORT = 0xFF;
+    _delay_ms(100);
+    DAC_PORT = 0;
+    _delay_ms(100);
 }
 
 void staircaseWave(uint8_t amp, uint8_t freq)
 {
-    // Refresh DAC DDR to be output.
     DAC_DDR = 255;
-
-    // Generate waveform.
     DAC_PORT = 0x00;
     _delay_us(200);
     DAC_PORT = 0x33;
@@ -67,16 +68,41 @@ void staircaseWave(uint8_t amp, uint8_t freq)
 
 void triangleWave(uint8_t amp, uint8_t freq)
 {
-    // TODO: Place ur code here
     DAC_DDR = 255;
-    DAC_PORT = 3;
+    DAC_PORT = 0xFF;
+    _delay_us(50);
+    DAC_PORT = 0;
+    _delay_us(50);
 }
 
 void sineWave(uint8_t amp, uint8_t freq)
 {
-    // TODO: Place ur code here
     DAC_DDR = 255;
-    DAC_PORT = 4;
+    for(int i=0;i<13;i++)
+    {
+		DAC_PORT = sine_value[i];
+		_delay_us(100);
+	}
+}
+void rampWave(uint8_t amp, uint8_t freq)
+{
+	DAC_DDR = 255;
+	for(int i=0;i<255;i++)
+	{
+		DAC_PORT = i;
+		_delay_us(250);
+	}
+	
+}
+void sawtoothWave(uint8_t amp, uint8_t freq)
+{
+	DAC_DDR = 255;
+	for(int i=255;i>=0;i--) 
+	{
+		DAC_PORT = i;
+		_delay_us(250);
+	}
+	
 }
 
 void WAVE_Init(void)
@@ -88,6 +114,8 @@ void WAVE_Init(void)
     waveform[1] = staircaseWave;
     waveform[2] = triangleWave;
     waveform[3] = sineWave;
+	waveform[4] = rampWave;
+	waveform[5] = sawtoothWave;
 
     /* Start with getting which wave to generate. */ 
     currentState = UPDATE_WAVE;    
